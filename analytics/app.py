@@ -8,6 +8,7 @@ from sqlalchemy import and_, text
 from random import randint
 
 from config import app, db
+from models import Token
 
 
 port_number = int(os.environ.get("APP_PORT", 5153))
@@ -73,7 +74,7 @@ def all_user_visits():
             "visits": row[1],
             "joined_at": str(row[2])
         }
-    
+
     return jsonify(response)
 
 
