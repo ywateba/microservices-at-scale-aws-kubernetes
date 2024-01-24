@@ -5,7 +5,13 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - $(aws ecr get-login --region us-east-1 --no-include-email)
+      - DOCKERHUB_USERNAME= arywatt #$(aws secretsmanager get-secret-value --secret-id my-dockerhub-username --query 'SecretString' --output text)
+      - DOCKERHUB_PASSWORD= 1522685Dock$ #$(aws secretsmanager get-secret-value --secret-id my-dockerhub-password --query 'SecretString' --output text)
+
+      # Docker login
+      - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
+
+
       - REPOSITORY_URI=456619976774.dkr.ecr.us-east-1.amazonaws.com/uda-analytics
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
@@ -22,6 +28,7 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - echo $REPOSITORY_URI:$IMAGE_TAG
+      - aws ecr get-login --region us-east-1 | docker login --username AWS --password-stdin 456619976774.dkr.ecr.us-east-1.amazonaws.com
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"<container-name>","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
