@@ -28,7 +28,8 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - echo $REPOSITORY_URI:$IMAGE_TAG
-      - aws ecr get-login --region us-east-1 | docker login --username AWS --password-stdin 456619976774.dkr.ecr.us-east-1.amazonaws.com
+      #- aws ecr get-login --region us-east-1 | docker login --username AWS --password-stdin 456619976774.dkr.ecr.us-east-1.amazonaws.com
+      - $(aws ecr get-login --region us-east-1 --no-include-email)
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"<container-name>","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
