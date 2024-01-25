@@ -8,7 +8,8 @@ phases:
       - aws --version
       - DOCKERHUB_USERNAME=#$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
       - DOCKERHUB_PASSWORD=#$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
-
+      - echo $DOCKERHUB_USERNAME
+      - echo $DOCKERHUB_PASSWORD
       # Docker login
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
 
