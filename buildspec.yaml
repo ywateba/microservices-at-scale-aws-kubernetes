@@ -6,8 +6,8 @@ phases:
       - echo Logging in to Amazon ECR...
       #- sudo yum install jq -y
       - aws --version
-      - DOCKERHUB_USERNAME=#$(aws secretsmanager get-secret-value --secret-id secrets/credentials/dockerhub --query 'SecretString' --output text | jq -r '.my-dockerhub-username')
-      - DOCKERHUB_PASSWORD=#$(aws secretsmanager get-secret-value --secret-id secrets/credentials/dockerhub --query 'SecretString' --output text | jq -r '.my-dockerhub-password')
+      - DOCKERHUB_USERNAME=#$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
+      - DOCKERHUB_PASSWORD=#$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
 
       # Docker login
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
