@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from flask import jsonify, request
 from sqlalchemy import and_, text
 from random import randint
+import traceback
 
 from config import app, db
 from models import Token
@@ -40,9 +41,14 @@ def get_daily_visits():
         GROUP  BY Date(created_at)
         """))
 
+
         response = {}
-        for row in result:
-            response[str(row[0])] = row[1]
+        try:
+            for row in result:
+                response[str(row[0])] = row[1]
+        except Exception:
+            response = "ok"
+            print(traceback.format_exc())
 
         app.logger.info(response)
 

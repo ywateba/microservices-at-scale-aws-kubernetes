@@ -15,4 +15,4 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{db_username}:{db_passwor
 
 db = SQLAlchemy(app)
 
-#app.logger.setLevel(logging.DEBUG)
+app.logger.setLevel(logging.DEBUG)
