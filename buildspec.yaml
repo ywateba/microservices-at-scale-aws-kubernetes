@@ -1,33 +1,43 @@
 version: 0.2
 
 phases:
-    #install:
-    # commands:
-    #       - echo "Installing Docker Buildx..."
-    #       - mkdir -p ~/.docker/cli-plugins
-    #       - curl -SL "https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
-    #       - chmod a+x ~/.docker/cli-plugins/docker-buildx
-    #       - docker buildx version
+    ###Could be useful according to the in wich you are building running the app
+    ###in my case just made sure it was the same for eks and cod build
+    ### install:
+    ## commands:
+    ##       - echo "Installing Docker Buildx..."
+    ##       - mkdir -p ~/.docker/cli-plugins
+    ##       - curl -SL "https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
+    ##       - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    ##       - docker buildx version
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
-      #- sudo yum install jq -y
       - aws --version
+
+      # Docker login
+      # You could need to be logged in docker hub to avoid pull rate limit issues
+      - echo Logging in to Docker hub.
+
+      ## get your credentials from aws secrets manager
       - DOCKERHUB_USERNAME=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
       - DOCKERHUB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
 
-      # Docker login
+      #connect to docker hub
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
 
-
+      # Set your Aws ecr repository
       - REPOSITORY_URI=456619976774.dkr.ecr.us-east-1.amazonaws.com/uda-analytics
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+      # version is taken from the version file
       - IMAGE_TAG=$(cat ./analytics/version)
 
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
+
+      # here you can use docker buildx if needed
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG ./analytics
 
 
@@ -35,9 +45,14 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
+
+      #print image full name
       - echo $REPOSITORY_URI:$IMAGE_TAG
-      #- aws ecr get-login --region us-east-1 | docker login --username AWS --password-stdin 456619976774.dkr.ecr.us-east-1.amazonaws.com
+
+      # connect to aws ecr
       - $(aws ecr get-login --region us-east-1 --no-include-email)
+
+      # push the image
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"<container-name>","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json

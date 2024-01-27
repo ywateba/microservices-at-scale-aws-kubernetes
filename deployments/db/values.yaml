@@ -1,0 +1,34 @@
+# values.yaml
+
+global:
+  postgresql:
+    auth:
+      #database: analytics-db
+      #postgresPassword: "UujT70VR0d" # admin password
+      existingSecret: "secrets/analytics/db"
+        adminPasswordKey: admin-password
+        database: database
+
+
+
+
+architecture: standalone
+
+
+primary:
+  persistence:
+    enabled : true
+    existingClaim: "postgres-pv-claim"
+    mountPath: /var/lib/postgresql/data
+    storageClass: "gp2"
+    labels:
+      selector:
+        matchLabels:
+          app: analytics-db
+
+
+# externalSecrets:
+#   postgresqlPassword:
+#     awsSecretName: my-aws-secret  # Name of your secret in AWS Secrets Manager
+#     awsRegion: us-east-1
+#     key: postgresql-password
