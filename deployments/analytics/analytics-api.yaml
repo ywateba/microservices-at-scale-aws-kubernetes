@@ -43,7 +43,6 @@ spec:
             port: 5000
           initialDelaySeconds: 5
           timeoutSeconds: 5
-
         env:
         - name: DB_HOST
           valueFrom:
