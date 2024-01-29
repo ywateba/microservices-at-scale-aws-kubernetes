@@ -37,14 +37,14 @@ PGPASSWORD="$POSTGRES_PASSWORD" kubectl exec -it -n $NAMESPACE $PODNAME -- psql 
 
 
 # to connect from outside the cluster - port fowarding
-kubectl port-forward --namespace $NAMESPACE svc/analytics-db-postgresql 5432:5432
+# kubectl port-forward --namespace $NAMESPACE svc/analytics-db-postgresql 5432:5432
 
 
 
-# to connect to cluster
-kubectl run db-postgresql-client \
-        --rm --tty -i --restart='Never' \
-        --namespace $NAMESPACE\
-        --image docker.io/bitnami/postgresql:16.1.0-debian-11-r22 \
-        --env="PGPASSWORD=$POSTGRES_PASSWORD" \
-        --command -- psql --host $DATABASE_SERVICE -U postgres -d $DATABASE_NAME -p 5432
+# # to connect to cluster
+# kubectl run db-postgresql-client \
+#         --rm --tty -i --restart='Never' \
+#         --namespace $NAMESPACE\
+#         --image docker.io/bitnami/postgresql:16.1.0-debian-11-r22 \
+#         --env="PGPASSWORD=$POSTGRES_PASSWORD" \
+#         --command -- psql --host $DATABASE_SERVICE -U postgres -d $DATABASE_NAME -p 5432
