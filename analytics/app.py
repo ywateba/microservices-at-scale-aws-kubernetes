@@ -45,9 +45,10 @@ def get_daily_visits():
         response = {}
         try:
             for row in result:
-                response[str(row[0])] = row[1]
+                app.logger.info(row)
+                response[str(row[0])] = str(row[1])
         except Exception:
-            response = "ok"
+            response = {"error":"unknown error"}
             print(traceback.format_exc())
 
         app.logger.info(response)
@@ -57,7 +58,7 @@ def get_daily_visits():
 
 @app.route("/api/reports/daily_usage", methods=["GET"])
 def daily_visits():
-    return jsonify(get_daily_visits)
+    return jsonify(get_daily_visits())
 
 
 @app.route("/api/reports/user_visits", methods=["GET"])
