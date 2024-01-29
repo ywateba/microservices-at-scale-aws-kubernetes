@@ -56,7 +56,6 @@ helm install -n kube-system csi-secrets-store secrets-store-csi-driver/secrets-s
 
 helm repo add aws-secrets-manager https://aws.github.io/secrets-store-csi-driver-provider-aws
 helm install -n kube-system secrets-provider-aws aws-secrets-manager/secrets-store-csi-driver-provider-aws
-
 ```
 4- Create all your secrets on AWS you can use  the console , or AWCLI (intented for eks)
 
@@ -76,7 +75,7 @@ You can add other secrets if you want. Make sure your cluster has the permission
 
 ```bash
 kubectl apply -f deployments/analytics/db-configmap.yaml -n  <your_name_space>  #for non sensitives values
-kubectl apply -f deployments/secrets/database-ecret.yaml -n  <your_name_space>  #for local use only
+kubectl apply -f deployments/secrets/database-secret.yaml -n  <your_name_space>  #for local use only
 kubectl apply -f deployments/secrets/secrets-provider-class.yaml -n  <your_name_space> # for secrets
 ```
 
@@ -119,6 +118,7 @@ It should be the same as the one defined in your secrets
 <sup><sub>* The instructions are adapted from [Bitnami's PostgreSQL Helm Chart](https://artifacthub.io/packages/helm/bitnami/postgresql).</sub></sup>
 
 5. Test Database Connection
+
 The database is accessible within the cluster. This means that when you will have some issues connecting to it via your local environment. You can either connect to a pod that has access to the cluster _or_ connect remotely via [`Port Forwarding`](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
 
 * Connecting Via Port Forwarding
@@ -144,14 +144,14 @@ kubectl port-forward --namespace your_name_space svc/<SERVICE_NAME>-postgresql 5
 So the files are ./db/{1_create_tables.sql, 2_seed_users.sql,3_seed_tokens.sql}
 You can use [this script](./z_database_helper.sh) for help
 
-7. Deploy the app (more insturctions at the bottom of the file )
+7. Deploy the app (more instructions at the bottom of the file )
 
 in local just start the server by using [this script](./analytics/start-server.sh) after activating port forwarding
 
-You can still deploy on local cluster if you want bz running the follwowing commands
+You can still deploy on local cluster if you want by running the follwowing commands
 
 ```bash
-kubectl apply -f deployments/analytics/db-configmap.yaml -n  <your_name_space>  # for non sensitives values
+
 kubectl apply -f deployments/analytics/analytics-api-local.yaml -n  <your_name_space> # for the application
 ```
 
@@ -171,7 +171,10 @@ to make the image available in your local cluster , run :
 
 ```bash
  kind load docker-image name_repository/app_name:tag --name your_local_cluster_name
+
 ```
+
+To check if everything is working , acrivate port forwarding for port 5000 too.
 
 10: Check the status
 
@@ -209,7 +212,9 @@ kubectl logs pod/<pod_id>  -n  <your_name_space>  # get the logs
 ####  Connect to your cluster on eks
 ```bash
 aws eks --region us-east-1 update-kubeconfig --name your_eks_cluster_name
+
 ```
+
 
 #### change the context
 
@@ -218,20 +223,54 @@ kubectl config use-context <name_of_eks_cluster>
 ```
 #### Repeat same steps as in local , including the steps intended for eks.
 
-Deploy all the pv, pvc , configmap and secrets before deploying the database, including.
+Deploy all the pv, pvc , configmap and secrets before deploying the database.
 
+
+
+In particular if you want to use secrets from aws
 ```bash
 kubectl apply -f deployments/secrets/secrets-provider-class -n  <your_name_space>  #  for secrets stored in aws
 ```
 
 #### Deploy the app
 
-```bash
-kubectl apply -f deployments/analytics/db-configmap.yaml -n  <your_name_space>
+##### Application image
 
-kubectl apply -f deployments/analytics/analytics-api-local.yaml -n  <your_name_space> # for the application
+Upon pushing your code on github the image build should start. Check its completed correctly and make sure is the same used in your stack
+
+
+##### Deploy
+
+
+```bash
+
+#to use the simple secrets
+kubectl apply -f deployments/analytics/analytics-api-eks.yaml -n  <your_name_space>
+
+# to use aws secrets
+kubectl apply -f deployments/analytics/analytics-api-eks-aws.yaml -n  <your_name_space>
 ```
 
+
+#### To update your deployments
+
+```bash
+# to change the app image
+kubectl set image deployment/my-deployment my-container=my-image:tag
+
+
+# to scale
+kubectl scale deployment <deployment-name> --replicas=<num-replicas>
+
+# for others things, modify the deployment file and...
+kubectl apply -f deployment.yaml
+
+
+
+
+```
+
+### Project original instructions
 #### Run the application
 In the `analytics/` directory:
 
