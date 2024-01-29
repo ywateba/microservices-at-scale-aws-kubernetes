@@ -33,11 +33,11 @@ spec:
           driver: secrets-store.csi.k8s.io
           readOnly: true
           volumeAttributes:
-            secretProviderClass: "eks-secrets"
+            secretProviderClass: "eks-db-secrets"
 
       containers:
       - name: analytics-api
-        image: 456619976774.dkr.ecr.us-east-1.amazonaws.com/uda-analytics:0.1.4
+        image: 456619976774.dkr.ecr.us-east-1.amazonaws.com/uda-analytics:0.1.5 ## image on ecr
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

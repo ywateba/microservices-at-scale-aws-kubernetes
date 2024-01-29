@@ -3,11 +3,15 @@
 global:
   postgresql:
     auth:
-      #database: analytics-db
-      #postgresPassword: "UujT70VR0d" # admin password
-      existingSecret: "secrets/analytics/db"
-        adminPasswordKey: admin-password
-        database: database
+      username: ""
+      password: ""
+      database: ""
+      postgresPassword: "" # admin password
+      existingSecret: "eks-db-secrets"
+      secretKeys:
+        adminPasswordKey: "admin-password"
+        database: "database"
+
 
 
 
