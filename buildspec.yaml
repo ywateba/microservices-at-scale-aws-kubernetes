@@ -19,8 +19,8 @@ phases:
       - echo Logging in to Docker hub.
 
       ## get your credentials from aws secrets manager
-      - DOCKERHUB_USERNAME=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
-      - DOCKERHUB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
+      - DOCKERHUB_USERNAME=arywatt #$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
+      - DOCKERHUB_PASSWORD=1522685Dock$  #$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
 
       #connect to docker hub
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
