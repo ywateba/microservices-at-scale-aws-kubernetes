@@ -1,8 +1,21 @@
 import logging
 import os
+import watchtower
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+handler = watchtower.CloudWatchLogHandler(
+    log_group="uda-app-group",
+    stream_name="analytics"
+)
+logger.addHandler(handler)
+
+
 
 db_username = os.environ["DB_USERNAME"]
 db_password = os.environ["DB_PASSWORD"]
@@ -14,5 +27,5 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
 
 db = SQLAlchemy(app)
-
+app.logger = logger
 app.logger.setLevel(logging.DEBUG)
