@@ -37,7 +37,7 @@ spec:
 
       containers:
       - name: analytics-api
-        image: 456619976774.dkr.ecr.us-east-1.amazonaws.com/uda-analytics:0.1.5 ## image on ecr
+        image: 470769016866.dkr.ecr.us-east-1.amazonaws.com/uda-analytics:0.1.5 ## image on ecr
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

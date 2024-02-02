@@ -51,6 +51,8 @@ phases:
 
       # connect to aws ecr
       - $(aws ecr get-login --region us-east-1 --no-include-email)
+      - $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI )
+      
 
       # push the image
       - docker push $REPOSITORY_URI:$IMAGE_TAG
