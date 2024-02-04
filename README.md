@@ -1,4 +1,4 @@
-# Coworking Space Service
+# Microservice  on Kubernetes
 
 This project showcases an api and database stack  deployed on a kubernetes cluster. The database is deployed with a helm chart
 
@@ -17,11 +17,15 @@ This project showcases an api and database stack  deployed on a kubernetes clust
 5. `kind` - to try kubernetes in local (optional)
 
 ### Remote Resources
-1. AWS CodeBuild - build Docker images remotely
+1. AWS CodeBuild & AWS Code Pipeline - build Docker images remotely and push it on AWS ECR
 2. AWS ECR - host Docker images
 3. Kubernetes Environment with AWS EKS
 4. AWS CloudWatch - monitor activity and logs in EKS
 5. GitHub - pull and clone code
+
+## How to use the project
+
+Push your code to github and check that that the image was build and pushed to ecr, then deploy it on Kubernetes
 
 ## How to deploy the project
 
