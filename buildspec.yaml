@@ -20,7 +20,7 @@ phases:
 
       ## get your credentials from aws secrets manager
       - DOCKERHUB_USERNAME=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/username --query 'SecretString' --output text )
-      - DOCKERHUB_PASSWORD=#$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
+      - DOCKERHUB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id secrets/dockerhub/password --query 'SecretString' --output text )
 
       #connect to docker hub
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
@@ -55,8 +55,4 @@ phases:
 
       # push the image
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"<container-name>","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
-artifacts:
-  files: imagedefinitions.json

@@ -1,6 +1,6 @@
 # Microservice  on Kubernetes
 
-This project showcases an api and database stack  deployed on a kubernetes cluster. The database is deployed with a helm chart
+This project showcases an api and database stack  deployed on a kubernetes cluster. The database is deployed with a helm chart. This projects assumes you have secrets on aws secret manager.
 
 ## Project structure
   - analytics : API source code folder
