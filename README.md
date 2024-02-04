@@ -1,6 +1,6 @@
 # Coworking Space Service
 
-This project showcases an api and database stack  deployed on a kubernetes cluster
+This project showcases an api and database stack  deployed on a kubernetes cluster. The database is deployed with a helm chart
 
 ## Project structure
   - analytics : API source code folder
@@ -9,26 +9,34 @@ This project showcases an api and database stack  deployed on a kubernetes clust
   - scripts: help scripts
 
 ## Project requirements
-#### Local Environment
+### Local Environment
 1. Python Environment - run Python 3.6+ applications and install Python dependencies via `pip`
 2. Docker CLI - build and run Docker images locally
 3. `kubectl` - run commands against a Kubernetes cluster
 4. `helm` - apply Helm Charts to a Kubernetes cluster
 5. `kind` - to try kubernetes in local (optional)
 
-#### Remote Resources
+### Remote Resources
 1. AWS CodeBuild - build Docker images remotely
 2. AWS ECR - host Docker images
 3. Kubernetes Environment with AWS EKS
 4. AWS CloudWatch - monitor activity and logs in EKS
 5. GitHub - pull and clone code
 
-### How to deploy the project
+## How to deploy the project
+
+First connect to your cluster
+
+```bash
+aws eks --region us-east-1 update-kubeconfig --name your_eks_cluster_name
+
+```
 
 1. Deploy the secrets
 
 ```bash
-    kubectl apply -f deployments/secret
+    kubectl apply -f deployments/secrets/database-secret.yaml
+    kubectl apply -f deployments/secrets/db-configmap.yaml
 ```
 2. Deploy the database with helm
 
@@ -70,9 +78,11 @@ To load secrets from Aws secret managers instead. Update the [secrets-provider-c
 
 
 ```bash
+helm status <service_name>
 kubectl get svc
+kubectl get pods
 kubectl get svc  <service_name>
-kubectl get svc  <deployment_name>
+kubectl get deployment  <deployment_name>
 ```
 
 6. To cleanup
@@ -83,6 +93,15 @@ To remove everything
 ```
 
 Don't forget to remove the infratructure on Aws to avoid unwanted costs
+
+
+## Try everything in local
+
+```
+kind create cluster --name your_cluster_name
+```
+
+Apply same previous steps and have fun !!!
 
 
 ## License
