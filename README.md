@@ -7,6 +7,7 @@ This project showcases an api and database stack  deployed on a kubernetes clust
   - db  : scripts to populate database
   - deployments : kubernetes deployments files
   - scripts: help scripts
+  - terraform : terraform code used to build infrastructure
 
 ## Project requirements
 ### Local Environment
