@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  build_and_push:
+    parameters:
+      folder:
+        type: string
+      image_name:
+        type: string
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t << parameters.image_name >> ./<< parameters.folder >>
+      - run:
+          name: Login to Docker Hub
+          command: echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - run:
+          name: Push Docker Image
+          command: |
+            docker push << parameters.image_name >>:$(git rev-parse --short HEAD)
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_and_push:
+          name: build_and_push_feed
+          folder: udagram-api-feed
+          image_name: arywatt/udagram-api-feed:0.2.0
+          context: your-context
+      - build_and_push:
+          name: build_and_push_user
+          folder: udagram-api-user
+          image_name: arywatt/udagram-api-user:0.2.0
+          context: ./udagram-api-user
+      - build_and_push:
+          name: build_and_push_frontend
+          folder: udagram-frontend
+          image_name: arywatt/udagram-frontend:0.1.0
+          context: ./udagram-frontend
+      - build_and_push:
+          name: build_and_push_reverseproxy
+          folder: reverseproxy
+          image_name: arywatt/reverseproxy:0.1.0
+          context: ./reverseproxy
